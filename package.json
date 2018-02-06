@@ -1,0 +1,20 @@
+{
+  "name": "itowns-screenshot",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "photo-collage": "^1.0.0",
+    "puppeteer": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.oslandia.net/Oslandia-3d/itowns-screenshot.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
