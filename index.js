@@ -3,7 +3,7 @@ const fs = require('fs');
 const createCollage = require("photo-collage");
 
 // Parse example/index.html
-const path = process.argv[1] + '/examples/index.html';
+const path = process.argv[2] + '/examples/index.html';
 const data = fs.readFileSync(path, 'utf8');
 
 const examples = data.split("href=\'./").map((u) => {
