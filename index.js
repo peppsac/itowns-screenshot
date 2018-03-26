@@ -1,10 +1,11 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const createCollage = require("photo-collage");
+const { execFile } = require('child_process');
 
 // Parse example/index.html
 function extractExamplesFromIndex() {
-  const path = process.argv[2] + '/examples/index.html';
+  const path = process.argv[3] + '/examples/index.html';
   const data = fs.readFileSync(path, 'utf8');
   return data.split("href=\'./").map((u) => {
     const end = u.indexOf("'", 0);
@@ -12,8 +13,8 @@ function extractExamplesFromIndex() {
   }).slice(1);
 }
 
-const examples = process.argv.length > 3 ?
-  process.argv.slice(3).map(n => `${n}.html`) :
+const examples = process.argv.length > 4 ?
+  process.argv.slice(4).map(n => `${n}.html`) :
   extractExamplesFromIndex();
 
 console.log('URLs:', examples);
@@ -28,7 +29,7 @@ const start = Date.now();
     page.setViewport({ width: 400, height: 300 });
     const exampleStart = Date.now();
     process.stdout.write(`${(exampleStart - start) / 1000} s - loading ${example} `);
-    await page.goto(`http://localhost:8080/examples/${example}`);
+    await page.goto(`http://localhost:${process.argv[2]}/examples/${example}`);
     process.stdout.write('.')
     // page.on('console', msg => {
     //   console.log((Date.now() - start) / 1000, ...msg.args().map(o => o.toString()));
@@ -78,6 +79,9 @@ const start = Date.now();
     await page.screenshot({path: example.replace('html', 'png')});
     examplesImage.push(example.replace('html', 'png'));
     process.stdout.write(`. wrote ${example.replace('html', 'png')} [${(Date.now() - exampleStart) / 1000} s]\n`);
+    execFile('termpix', ['--true-color', '--width', '120', `${example.replace('html', 'png')}`], (error, stdout, stderr) => {
+        process.stdout.write(stdout);
+    });
   }
 
   await browser.close();
@@ -96,5 +100,8 @@ const start = Date.now();
       const src = canvas.jpegStream();
       const dest = fs.createWriteStream("collage.jpg");
       src.pipe(dest);
+    execFile('termpix', ['--true-color', '--width', '120', 'collage.jpg'], (error, stdout, stderr) => {
+        process.stdout.write(stdout);
+    });
     });
 })();
